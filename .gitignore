@@ -1,0 +1,52 @@
+# ========================
+# Secrets and local config
+# ========================
+.env
+.env.*
+!.env.example
+
+# ========================
+# Runtime output
+# ========================
+recordings/
+*.wav
+
+# ========================
+# Python cache
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ========================
+# Virtual environments
+# ========================
+.venv/
+venv/
+env/
+
+# ========================
+# Build artifacts
+# ========================
+build/
+dist/
+*.spec
+
+# ========================
+# Test / Lint cache
+# ========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ========================
+# OS files
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# IDE files（可选）
+# ========================
+.vscode/
+.idea/
