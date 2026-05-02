@@ -1,145 +1,167 @@
-# Voice Timer Assistant
+# 🎙️ Voice Timer Assistant
 
-A small Windows-friendly Python voice assistant with push-to-talk recording, iFlytek speech transcription, Spark intent routing, timer reminders, chat replies, text-to-speech, a tray menu, and an optional log window.
+一个轻量级中文桌面语音助手，支持**按住说话（Push-to-Talk）**、语音转文字、大模型理解、倒计时提醒与系统托盘运行。
 
-## Features
+---
 
-- Push-to-talk hotkey: hold `Alt + `` to record, release `` ` `` to stop.
-- Speech-to-text via iFlytek recording file transcription API.
-- Intent routing via iFlytek Spark Ultra-32K.
-- Timer skill with Chinese duration parsing, reminder message cleanup, and voice announcement when the timer ends.
-- Chat skill powered by Spark, with mock fallback.
-- System tray menu:
-  - Enable/disable keyboard listening
-  - Show log window
-  - Exit
-- Optional tkinter log window that mirrors `print` output.
-- PyInstaller-aware paths:
-  - `.env` is read from the executable directory after packaging.
-  - `recordings/` is written next to the executable after packaging.
+## ✨ Features
 
-## Project Structure
+- 🎤 按住说话（Push-to-Talk）：默认快捷键 `Alt + \``
+- 🧠 大模型理解：基于科大讯飞 Spark Ultra-32K
+- 🎧 语音识别：使用讯飞录音文件转写 API
+- ⏱️ 倒计时提醒：支持自然语言表达
+- 💬 聊天问答：自动识别并调用大模型回答
+- 🔊 语音播报：支持倒计时与聊天回复
+- 🖥️ 系统托盘：后台常驻运行
+- 📜 日志窗口：可选查看运行日志
+
+---
+
+## 📁 项目结构
 
 ```text
-main.py              # tray, keyboard listener, push-to-talk flow, log window
-config.py            # config, .env loading, resource/writable paths
-audio_recorder.py    # microphone recording
-speech_to_text.py    # iFlytek recording file transcription
-intent_router.py     # Spark intent routing and timer duration parsing
-spark_client.py      # Spark WebSocket client
-tts.py               # text-to-speech
-skills/
-  chat.py            # chat reply skill
-  timer.py           # timer skill
+voice_timer/
+├── main.py              # 主程序：热键、托盘、日志窗口、主流程
+├── config.py            # 配置与路径管理
+├── audio_recorder.py    # 录音模块
+├── speech_to_text.py    # 科大讯飞录音文件转写
+├── intent_router.py     # 意图识别与时间解析
+├── spark_client.py      # Spark API 调用封装
+├── tts.py               # 语音播报
+├── requirements.txt     # 依赖列表
+├── .env.example         # 环境变量示例
+├── skills/
+│   ├── __init__.py
+│   ├── timer.py         # 倒计时功能
+│   └── chat.py          # 聊天功能
+└── README.md
 ```
 
-## Install
+---
 
-Python 3.10+ is recommended.
+## 🚀 安装依赖
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Some audio or tray dependencies may require a normal desktop session. Running over a headless shell is not recommended.
+---
 
-## Configuration
+## 🔧 配置环境变量
 
-Copy the example file:
+复制 `.env.example` 为 `.env`：
 
 ```bash
-copy .env.example .env
+cp .env.example .env
 ```
 
-Fill in your iFlytek credentials:
+Windows PowerShell 可使用：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+填写你的 API Key：
 
 ```env
-LLM_PROVIDER=spark
-STT_PROVIDER=xfyun
-TTS_PROVIDER=pyttsx3
-RECORD_SECONDS=5
-SAMPLE_RATE=16000
+# 讯飞录音文件转写
+XFYUN_APPID=你的录音转写APPID
+XFYUN_SECRET_KEY=你的录音转写SecretKey
 
-XFYUN_APPID=
-XFYUN_SECRET_KEY=
-
-XFYUN_SPARK_APPID=
-XFYUN_SPARK_API_KEY=
-XFYUN_SPARK_API_SECRET=
+# 讯飞 Spark 大模型
+XFYUN_SPARK_APPID=你的Spark APPID
+XFYUN_SPARK_API_KEY=你的Spark APIKey
+XFYUN_SPARK_API_SECRET=你的Spark APISecret
 XFYUN_SPARK_MODEL=spark-ultra-32k
+
+LLM_PROVIDER=spark
 ```
 
-Use mock chat replies by setting:
+---
 
-```env
-LLM_PROVIDER=mock
-```
-
-Do not commit `.env`. Use `.env.example` for public configuration templates.
-
-## Run
+## ▶️ 运行项目
 
 ```bash
 python main.py
 ```
 
-The app starts in the system tray. Hold `Alt + `` to record and release `` ` `` to stop. Right-click the tray icon to enable or disable listening, show the log window, or exit.
+程序启动后会常驻系统托盘。
 
-Example timer phrases:
+---
 
-```text
-5秒后提醒我喝水
-一分钟后提醒我休息
-倒数5秒
-计时十秒
-```
+## 🎮 使用方式
 
-Example chat phrase:
+1. 按住 `Alt + \`` 开始录音
+2. 松开 `` ` `` 结束录音并自动处理
 
-```text
-你好，介绍一下你自己
-```
+---
 
-## Build With PyInstaller
+## 🧪 使用示例
 
-Install PyInstaller if needed:
+| 语音输入 | 执行效果 |
+| --- | --- |
+| 倒数十秒 | 启动 10 秒倒计时 |
+| 5秒后提醒我喝水 | 5 秒后语音提醒“喝水” |
+| 一分钟后提醒我休息 | 60 秒后语音提醒“休息” |
+| 哈基米是什么梗 | 调用 Spark 生成回答 |
+
+---
+
+## 📦 打包为 exe
+
+安装 PyInstaller：
 
 ```bash
-pip install pyinstaller
+python -m pip install pyinstaller
 ```
 
-Build a windowed tray app:
+先打包调试版本：
 
 ```bash
-pyinstaller --noconsole --onefile --name VoiceTimer main.py
+python -m PyInstaller --onefile main.py
 ```
 
-After packaging, put `.env` next to the generated executable:
+确认无误后再打包正式版本：
+
+```bash
+python -m PyInstaller --onefile --noconsole main.py
+```
+
+打包完成后，将 `.env` 放在 exe 同目录：
 
 ```text
 dist/
-  VoiceTimer.exe
-  .env
+├── main.exe
+└── .env
 ```
 
-Runtime recordings will be saved next to the executable:
+---
 
-```text
-dist/
-  recordings/
-```
+## ⚠️ 注意事项
 
-## Verification
+- `.env` 不要上传到 GitHub
+- 建议关闭 VPN 使用讯飞 API（否则可能出现 SSL 错误）
+- 热键无效时建议使用管理员权限运行
+- 无控制台模式下可通过托盘打开日志窗口
+- 录音文件保存在 `recordings/` 目录
 
-Check syntax before committing:
+---
 
-```bash
-python -m compileall .
-```
+## ✅ TODO List
 
-## Notes
+只是存在一个TODO List，很难说我会不会做（生死不明就是死了）
 
-- `.env`, `recordings/`, `build/`, `dist/`, and Python cache files are ignored by Git.
-- API calls automatically fall back where possible so the app does not crash on temporary service failures.
+- [ ] 对其他云服务提供商的支持（有人提或者我的免费额度用完后会做）（最有可能的一集）
+- [ ] 让程序可以理解如“一分半”的句式（居然不支持吗？）
+- [ ] 用户主动修改呼出的组合键
+- [ ] 开机自启动
+- [ ] 托盘状态显示（监听中 / 已关闭）
+- [ ] 更多语音指令（打开软件、执行命令）
+- [ ] UI 界面
+- [ ] 更自然的语音播报
+
+---
+
+## 📄 License
+
+MIT License
